@@ -3,6 +3,7 @@ import ReactDOM from "react-dom";
 import "./styles/index.css";
 import App from "./components/App";
 import * as serviceWorker from "./serviceWorker";
+import { BrowserRouter } from 'react-router-dom'
 
 //1
 import { ApolloProvider } from "react-apollo";
@@ -24,9 +25,11 @@ const client = new ApolloClient({
 //4
 ReactDOM.render(
   <React.StrictMode>
+  <BrowserRouter>
     <ApolloProvider client = {client}>
       <App />
     </ApolloProvider>
+    </BrowserRouter>
   </React.StrictMode>,
   document.getElementById("root")
 );
