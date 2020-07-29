@@ -27,7 +27,7 @@ export default function CreateLink() {
       <Mutation
         mutation={POST_MUTATION}
         variables={{ description, url }}
-      >
+       >
         {(PostMutation) => <button onClick={PostMutation}>Submit</button>}
       </Mutation>
     </div>
