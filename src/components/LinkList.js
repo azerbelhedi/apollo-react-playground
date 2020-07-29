@@ -4,6 +4,15 @@ import { gql } from "apollo-boost";
 import { Query } from "react-apollo";
 
 export default function LinkList() {
+  const _updateCacheAfterVote = (store, createVote, linkId) => {
+    const data = store.readQuery({ query: FEED_QUERY });
+
+    const votedLink = data.feed.links.find((link) => link.id === linkId);
+    votedLink.votes = createVote.link.votes;
+
+    store.writeQuery({ query: FEED_QUERY, data });
+  };
+
   return (
     <Query query={FEED_QUERY}>
       {({ loading, error, data }) => {
@@ -18,7 +27,7 @@ export default function LinkList() {
         return (
           <div>
             {linksToRender.map((link, index) => (
-              <Link key={link.id} link={link} index={index} />
+              <Link key={link.id} link={link} index={index} updateStoreAfterVote = {_updateCacheAfterVote} />
             ))}
           </div>
         );
@@ -27,7 +36,7 @@ export default function LinkList() {
   );
 }
 
-const FEED_QUERY = gql`
+export const FEED_QUERY = gql`
   {
     feed {
       links {

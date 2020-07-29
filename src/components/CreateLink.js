@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { gql } from "apollo-boost";
 import { Mutation } from "react-apollo";
+import { FEED_QUERY } from './LinkList'
 
 export default function CreateLink() {
   const [state, setState] = useState({ description: "", url: "" });
@@ -27,7 +28,15 @@ export default function CreateLink() {
       <Mutation
         mutation={POST_MUTATION}
         variables={{ description, url }}
-       >
+        update={(store, { data: { post } }) => {
+          const data = store.readQuery({ query: FEED_QUERY });
+          data.feed.links.unshift(post);
+          store.writeQuery({
+            query: FEED_QUERY,
+            data,
+          });
+        }}
+      >
         {(PostMutation) => <button onClick={PostMutation}>Submit</button>}
       </Mutation>
     </div>

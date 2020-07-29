@@ -1,8 +1,10 @@
 import React from "react";
 import { AUTH_TOKEN } from "../constants";
 import { timeDifferenceForDate } from "../utils";
+import { gql } from "apollo-boost";
+import { Mutation } from "react-apollo";
 
-export default function Link({ link, index }) {
+export default function Link({ link, index, updateStoreAfterVote }) {
   const authToken = localStorage.getItem(AUTH_TOKEN);
 
   const _voteForLink = () => {};
@@ -12,9 +14,17 @@ export default function Link({ link, index }) {
       <div className="flex items-center">
         <span className="gray">{index + 1}.</span>
         {authToken && (
-          <div className="ml1 gray f11" onClick={() => _voteForLink()}>
-            ▲
-          </div>
+          <Mutation
+            mutation={VOTE_MUTATION}
+            variables={{ linkId: link.id }}
+            update = {(store, {data : { vote }})  => updateStoreAfterVote(store, vote, link.id) }
+          >
+            {(voteMutation) => (
+              <div className="ml1 gray f11" onClick={voteMutation}>
+                ▲
+              </div>
+            )}
+          </Mutation>
         )}
       </div>
       <div className="ml1">
@@ -30,3 +40,23 @@ export default function Link({ link, index }) {
     </div>
   );
 }
+
+const VOTE_MUTATION = gql`
+  mutation VoteMutation($linkId: ID!) {
+    vote(linkId: $linkId) {
+      id
+      link {
+        id
+        votes {
+          id
+          user {
+            id
+          }
+        }
+      }
+      user {
+        id
+      }
+    }
+  }
+`;
